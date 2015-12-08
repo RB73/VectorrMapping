@@ -212,8 +212,8 @@ public class ServerDB {
 		int counter = 0;
 		String pointID = pt.getId();
 		String ptName = pt.getName();
-		int ptX = pt.getLocX();
-		int ptY = pt.getLocY();
+		double ptX = pt.getLocX();
+		double ptY = pt.getLocY();
 		ArrayList<Edge> edgeArray = pt.getEdges();
 		int numberEdges = pt.getNumEdges();
 		pt.setMapId(map.getMapId());
@@ -1261,7 +1261,7 @@ public class ServerDB {
 	}
 	
 	//---------------------------------------------------------------Test Functions----------------------------------------------------------------
-	
+	/*
 	public static void testDB()
 	{
 		clearDatabase();
@@ -1421,7 +1421,7 @@ public class ServerDB {
 			e.printStackTrace();
 		}
 		System.out.println("--------------------Finished Point removal--------------------");
-	}
+	}*/
 
 	public static void testRetrieval()
 	{

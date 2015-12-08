@@ -2,24 +2,39 @@ package com.vectorr.vectorrmapping;
 
 import java.util.ArrayList;
 
-public class Point {
+public class Point implements Comparable{
 	private String id;
 	private int mapId;
 	private String name;
 	private int index;
-	private int locX;
-	private int locY;
-	private int globX;
-	private int globY;
+	private double locX;
+	private double locY;
+	private double globX;
+	private double globY;
 	private ArrayList<Edge> edges = new ArrayList<Edge>();
 	private int numberEdges;
+	private boolean isStairs;
+	public boolean isStairs() {
+		return isStairs;
+	}
+	public void setStairs(boolean isStairs) {
+		this.isStairs = isStairs;
+	}
+	public boolean isOutside() {
+		return isOutside;
+	}
+	public void setOutside(boolean isOutside) {
+		this.isOutside = isOutside;
+	}
+
+	private boolean isOutside;
 	
 	public Point()
 	{
 		
 	}
 	//TODO UPdate Constructors
-	public Point(String id, String name, int x, int y) {
+	public Point(String id, String name, double x, double y) {
 		this.id = id;
 		this.name = name;
 		this.locX = x;
@@ -28,6 +43,7 @@ public class Point {
 		this.index = 0;
 		this.globX = x;
 		this.globY = y;
+		this.mapId = 0;
 	}
 	
 	public Point(String id, int mapId, String name, int index, int x, int y) {
@@ -43,7 +59,8 @@ public class Point {
 	}
 	
 
-	public Point(String id, String name, int locX, int locY, int globX, int globY, int numberEdges) {
+	public Point(String id, String name, double locX, double locY, double globX, double globY,
+			int numberEdges) {
 		this.id = id;
 		this.name = name;
 		this.locX = locX;
@@ -54,7 +71,9 @@ public class Point {
 		this.globY = globY;
 	}
 	
-	public Point(String id, int mapId, String name, int index, int locX, int locY, int globX, int globY, int numberEdges) {
+	//TODO phase out this constructor
+	public Point(String id, int mapId, String name, int index, double locX, double locY, double globX, 
+			double globY, int numberEdges) {
 		this.id = id;
 		this.mapId = mapId;
 		this.name = name;
@@ -64,17 +83,23 @@ public class Point {
 		this.index = index;
 		this.globX = globX;
 		this.globY = globY;
+		this.isStairs = false;
+		this.isOutside = false;
 	}
 	
-	public Point(String id, String name, int index, int x, int y, int numberEdges) {
+	public Point(String id, int mapId, String name, int index, double locX, double locY, double globX, 
+			double globY, int numberEdges, boolean isStairs, boolean isOutside) {
 		this.id = id;
+		this.mapId = mapId;
 		this.name = name;
-		this.index = index;
-		this.locX = x;
-		this.locY = y;
+		this.locX = locX;
+		this.locY = locY;
 		this.numberEdges = numberEdges;
-		this.globX = x;
-		this.globY = y;
+		this.index = index;
+		this.globX = globX;
+		this.globY = globY;
+		this.isStairs = isStairs;
+		this.isOutside = isOutside;
 	}
 	
 	public String getId() {
@@ -104,28 +129,28 @@ public class Point {
 	{
 		this.name = newName;
 	}
-	public int getLocX() {
+	public double getLocX() {
 		return locX;
 	}
-	public void setLocX(int x) {
+	public void setLocX(double x) {
 		this.locX = x;
 	}
-	public int getLocY() {
+	public double getLocY() {
 		return locY;
 	}
-	public void setLocY(int y) {
+	public void setLocY(double y) {
 		this.locX = y;
 	}
-	public int getGlobX() {
+	public double getGlobX() {
 		return globX;
 	}
-	public void setGlobX(int x) {
+	public void setGlobX(double x) {
 		this.globX = x;
 	}
-	public int getGlobY() {
+	public double getGlobY() {
 		return globY;
 	}
-	public void setGlobY(int y) {
+	public void setGlobY(double y) {
 		this.globY = y;
 	}
 	public ArrayList<Edge> getEdges() {
@@ -208,5 +233,11 @@ public class Point {
 			this.numberEdges++;
 			return true;
 		}
+	}
+	
+	@Override
+	public int compareTo(Object o) {
+		int temp = this.getName().compareTo(((Point) o).getName());
+		return temp;
 	}
 }
