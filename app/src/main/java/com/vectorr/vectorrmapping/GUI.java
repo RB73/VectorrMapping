@@ -23,7 +23,13 @@ public class GUI extends AppCompatActivity {
     int img = 0;
     Boolean colorBlind = false;
     private Menu menu;
-
+    ArrayList<Point> pointList = new ArrayList<Point>();
+    ArrayList<String> startPoints = new ArrayList<String>();
+    ArrayList<String> endPoints = new ArrayList<String>();
+    int startMap = 0;
+    int startPointNum = 0;
+    int endMap = 0;
+    int endPointNum = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +50,26 @@ public class GUI extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 img = position;
+                startMap = position;
                 setCurrentImage();
+                switch(position){
+                    case 0:
+                        startPoints.clear();
+                        startPoints.add("Select Point");
+                        break;
+                    case 1:
+                        startPoints.clear();
+                        startPoints.add("Select Point");
+                        startPoints.add("Fountain");
+                        startPoints.add("GL Entrance");
+                        break;
+                    case 2:
+                        startPoints.clear();
+                        startPoints.add("Select Point");
+                        startPoints.add("GL Entrance");
+                        startPoints.add("Help Desk");
+                        break;
+                }
             }
 
             @Override
@@ -56,7 +81,7 @@ public class GUI extends AppCompatActivity {
         startPoint.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                // your code here
+                startPointNum = position;
             }
 
             @Override
@@ -69,7 +94,26 @@ public class GUI extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 img = position;
+                endMap = position;
                 setCurrentImage();
+                switch(position) {
+                    case 0:
+                        endPoints.clear();
+                        endPoints.add("Select Point");
+                        break;
+                    case 1:
+                        endPoints.clear();
+                        endPoints.add("Select Point");
+                        endPoints.add("Fountain");
+                        endPoints.add("GL Entrance");
+                        break;
+                    case 2:
+                        endPoints.clear();
+                        endPoints.add("Select Point");
+                        endPoints.add("GL Entrance");
+                        endPoints.add("Help Desk");
+                        break;
+                }
             }
 
             @Override
@@ -81,7 +125,7 @@ public class GUI extends AppCompatActivity {
         endPoint.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                // your code here
+                endPointNum = position;
             }
 
             @Override
@@ -110,14 +154,22 @@ public class GUI extends AppCompatActivity {
         countries.add("Sri Lanka");
         countries.add("United States");
 
+        ArrayList<String> maps = new ArrayList<String>();
+        maps.add("Select Map");
+        maps.add("Campus");
+        maps.add("Gordon Library");
+
+        startPoints.add("Select Point");
+        endPoints.add("Select Point");
+
         //Turn the ArrayLists to Adapters
-        ArrayAdapter startAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, countries);
+        ArrayAdapter startAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, maps);
         startAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        ArrayAdapter startPointAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, countries);
+        ArrayAdapter startPointAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, startPoints);
         startPointAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        ArrayAdapter endAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, countries);
+        ArrayAdapter endAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, maps);
         endAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        ArrayAdapter endPointAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, countries);
+        ArrayAdapter endPointAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, endPoints);
         endPointAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         //Put Adapters into Spinners
@@ -165,29 +217,33 @@ public class GUI extends AppCompatActivity {
     }
 
     public void generatePath(View view) {
-        Intent intent = new Intent(this, displayRoute.class);
+        if(startMap != 0 && startPointNum != 0 && endMap !=0 && endPointNum !=0) {
+            Intent intent = new Intent(this, displayRoute.class);
 
-        //Create Spinners
-        Spinner start = (Spinner) findViewById(R.id.start_spinner);
-        Spinner startPoint = (Spinner) findViewById(R.id.point1_spinner);
-        Spinner end = (Spinner) findViewById(R.id.end_spinner);
-        Spinner endPoint = (Spinner) findViewById(R.id.point2_spinner);
+            //Create Spinners
+            Spinner start = (Spinner) findViewById(R.id.start_spinner);
+            Spinner startPoint = (Spinner) findViewById(R.id.point1_spinner);
+            Spinner end = (Spinner) findViewById(R.id.end_spinner);
+            Spinner endPoint = (Spinner) findViewById(R.id.point2_spinner);
 
-        //Get strings from Spinners
-        String sMap = start.getSelectedItem().toString();
-        String sPoint = startPoint.getSelectedItem().toString();
-        String eMap = end.getSelectedItem().toString();
-        String ePoint = endPoint.getSelectedItem().toString();
+            //Get strings from Spinners
+            /*
+            String sMap = start.getSelectedItem().toString();
+            String sPoint = startPoint.getSelectedItem().toString();
+            String eMap = end.getSelectedItem().toString();
+            String ePoint = endPoint.getSelectedItem().toString();
+            */
 
-        //Store the Strings as extra data
-        intent.putExtra("startMap", sMap);
-        intent.putExtra("startPoint", sPoint);
-        intent.putExtra("endMap", eMap);
-        intent.putExtra("endPoint", ePoint);
-        intent.putExtra("mapNum", img);
-        intent.putExtra("colorBlind", colorBlind);
-        //Start the activity
-        startActivity(intent);
+            //Store the Strings as extra data
+            intent.putExtra("startMap", startMap);
+            intent.putExtra("startPoint", startPoint.getSelectedItem().toString());
+            intent.putExtra("endMap", endMap);
+            intent.putExtra("endPoint", endPoint.getSelectedItem().toString());
+            intent.putExtra("mapNum", img);
+            intent.putExtra("colorBlind", colorBlind);
+            //Start the activity
+            startActivity(intent);
+        }
     }
     //Change Image
 
@@ -206,7 +262,7 @@ public class GUI extends AppCompatActivity {
                 imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(), R.drawable.campus, imageView.getWidth(), imageView.getMaxHeight()));
                 break;
             case 2:
-                imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(), R.drawable.campus_center_1, imageView.getWidth(), imageView.getMaxHeight()));
+                imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(), R.drawable.gordon_library_2, imageView.getWidth(), imageView.getMaxHeight()));
                 break;
             case 3:
                 imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(), R.drawable.project_center_1, imageView.getWidth(), imageView.getMaxHeight()));
@@ -215,7 +271,7 @@ public class GUI extends AppCompatActivity {
                 imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(), R.drawable.stratton_hall_1, imageView.getWidth(), imageView.getMaxHeight()));
                 break;
             case 5:
-                imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(), R.drawable.higgins_house_1, imageView.getWidth(), imageView.getMaxHeight()));
+                imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(), R.drawable.higgins_1, imageView.getWidth(), imageView.getMaxHeight()));
                 break;
         }
     }
@@ -258,6 +314,27 @@ public class GUI extends AppCompatActivity {
         return BitmapFactory.decodeResource(res, resId, options);
     }
     private void generateData(){
+        Point p1 = new Point("0", 1, "Fountain", 0, 0.5845601750907536, 0.5209838991465665, 1345, 826, 0);
+        Point p2 = new Point("1", 1, "Path", 1, 0.6324252357410155, 0.5329244227699498, 1455, 845, 0);
+        Point p3 = new Point("2", 1, "Path", 2, 0.6315588998016441, 0.5445507220874546, 1453, 864, 0);
+        Point p4 = new Point("3", 1, "GL Entrance", 3, 0.6915526636031035, 0.5561770214049594, 1591, 882, 0);
+        Point p5 = new Point("4", 4, "GL Entrance", 4, 0.5301687037355828, 0.8486486486486486, 117, 557, 0);
+        Point p6 = new Point("5", 4, "Hallway", 5, 0.5276639697021863, 0.6675675675675675, 401, 585, 0);
+        Point p7 = new Point("6", 4, "Help Desk", 6, 0.6854622138061629, 0.6675675675675675, 365, 743, 0);
 
+        Edge e1 = new Edge(p1, p2);
+        Edge e2 = new Edge(p2, p3);
+        Edge e3 = new Edge(p3, p4);
+        Edge e4 = new Edge(p4, p5);
+        Edge e5 = new Edge(p5, p6);
+        Edge E6 = new Edge(p6, p7);
+
+        pointList.add(p1);
+        pointList.add(p2);
+        pointList.add(p3);
+        pointList.add(p4);
+        pointList.add(p5);
+        pointList.add(p6);
+        pointList.add(p7);
     }
 }
