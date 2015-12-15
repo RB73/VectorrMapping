@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.vectorr.vectorrmapping.displayRoute"
-    android:orientation="vertical" >
+    tools:context="com.vectorr.vectorrmapping.displayRoute">
 
-    <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/RelativeLayout01"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
@@ -20,40 +19,63 @@
             android:id="@+id/directions"
             android:layout_width="fill_parent"
             android:layout_height="80sp"
+            android:layout_centerInParent="true"
             android:gravity="center"
-            android:text="Directions"
-            android:layout_centerInParent="true"/>
+            android:text="Directions" />
     </RelativeLayout>
+
     <LinearLayout
+        android:id="@+id/LowerButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2">
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
 
-        <Button
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="previousPath"
-            android:text="Previous"
-            android:layout_centerInParent="true"
-            android:layout_weight="1"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="nextPath"
-            android:text="Next"
-            android:layout_centerInParent="true"
-            android:layout_weight="1"/>
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/previous"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_weight="1"
+                android:onClick="previousPath"
+                android:text="Previous" />
+
+            <Button
+                android:id="@+id/next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_weight="1"
+                android:onClick="nextPath"
+                android:text="Next" />
+        </LinearLayout>
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_weight=".9"
+                android:text="Full Text Directions"
+                android:onClick="fullText" />
+        </RelativeLayout>
     </LinearLayout>
-    <TextView
-        android:id="@+id/text_box"
+
+    <com.vectorr.vectorrmapping.TouchImageView
+        android:id="@+id/imageDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true" />
+        android:layout_below="@id/RelativeLayout01"
+        android:layout_above="@id/LowerButtons"
+        android:layout_weight="1.0" />
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageDisplay"/>
-
-</LinearLayout>
+</RelativeLayout>

@@ -1,20 +1,26 @@
 package com.vectorr.vectorrmapping;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 public class displayRoute extends AppCompatActivity {
     ArrayList<Point> path = new ArrayList<Point>();
@@ -29,6 +35,8 @@ public class displayRoute extends AppCompatActivity {
     ArrayList<Point> pointList = new ArrayList<Point>();
     ArrayList<Point> route = new ArrayList<Point>();
     int mapPos = 0;
+    ArrayList<Map> allMaps = new ArrayList<Map>();
+    ArrayList<Map> routeMaps = new ArrayList<Map>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +49,22 @@ public class displayRoute extends AppCompatActivity {
 
         //Extract data
         int startMap = locations.getInt("startMap");
-        String startPoint = locations.getString("startPoint");
+        int startPoint = locations.getInt("startPoint");
         int endMap = locations.getInt("endMap");
-        String endPoint = locations.getString("endPoint");
+        int endPoint = locations.getInt("endPoint");
 
+        //Get Preferences
+        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
+        int stairs = Integer.parseInt(SP.getString("stairs", "1")) - 1;
+        int outside = Integer.parseInt(SP.getString("outside", "1")) - 1;
+        double speed = Double.parseDouble(SP.getString("speed", "4.5"));
+        boolean colorBlind = SP.getBoolean("color_blind", false);
+
+        //Get Data from Database
+
+        allMaps = database.getInstance().getData();
+        Collections.sort(allMaps);
         //Create string to display
         /*
         StringBuilder message = new StringBuilder();
@@ -90,17 +110,25 @@ public class displayRoute extends AppCompatActivity {
                 break;
         }
 */
-        switch (startMap) {
-            case 0:
-                imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(), R.drawable.vectorr_logo, imageView.getWidth(), imageView.getMaxHeight()));
-                break;
-            case 1:
-                imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(), R.drawable.campus, imageView.getWidth(), imageView.getMaxHeight()));
-                break;
-            case 2:
-                imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(), R.drawable.gordon_library_2, imageView.getWidth(), imageView.getMaxHeight()));
-                break;
+
+        String mapName = allMaps.get(startMap).getMapName();
+        if (mapName.contains("157_west")) {
+            if (mapName.contains("_1")) {
+                imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(),
+                        R.drawable.west_157_1, imageView.getWidth(), imageView.getMaxHeight()));
+            } else if (mapName.contains("_2")) {
+                imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(),
+                        R.drawable.west_157_2, imageView.getWidth(), imageView.getMaxHeight()));
+            } else if (mapName.contains("_b")) {
+                imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(),
+                        R.drawable.west_157_basement, imageView.getWidth(), imageView.getMaxHeight()));
+            }
+        } else {
+            imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(),
+                    getResources().getIdentifier(mapName, "drawable", getPackageName()),
+                    imageView.getWidth(), imageView.getMaxHeight()));
         }
+
         //Draw route onto map
         generateData();
         Point one = new Point("1", "first", 0, 0);
@@ -118,22 +146,11 @@ public class displayRoute extends AppCompatActivity {
 
         AStar astar = new AStar();
         astar.reset();
-        Point startLoc = null;
-        Point endLoc = null;
-        for (Point point : pointList) {
-            if (point.getName().equals(startPoint) && point.getMapId() == startMap) {
-                startLoc = point;
-            }
-        }
-        for (Point point : pointList) {
-            if (point.getName().equals(endPoint) && point.getMapId() == endMap) {
-                endLoc = point;
-            }
-        }
-        route = astar.PathFind(startLoc, endLoc, 0, 0);
+        route = astar.PathFind(allMaps.get(startMap).getPointList().get(startPoint),
+                allMaps.get(endMap).getPointList().get(endPoint), outside, stairs);
 
         //Check colorblind mode
-        if (locations.getBoolean("colorBlind")) {
+        if (colorBlind) {
             before = Color.rgb(182, 109, 255);
             after = Color.rgb(0, 146, 146);
         }
@@ -153,6 +170,18 @@ public class displayRoute extends AppCompatActivity {
         } catch (MalformedDirectionException e) {
             e.printStackTrace();
         }
+        for (int i = 0; i < MultiMapFinalDir.size(); i++) {
+            if (MultiMapFinalDir.get(i).size() > 0) {
+                for (int j = 0; j < allMaps.size(); j++) {
+                    if (allMaps.get(j).getMapId() == MultiMapFinalDir.get(i).get(0).getOrigin().getMapId()) {
+                        routeMaps.add(allMaps.get(j));
+                    }
+                }
+            }
+            else {
+                routeMaps.add(new Map());
+            }
+        }
         //Set Text
         direction.setText(textDir.get(0).get(0));
 
@@ -171,17 +200,29 @@ public class displayRoute extends AppCompatActivity {
 
         //Draw route to map
         for (int i = 0; i < MultiMapFinalDir.get(0).size(); i++) {
-            canvas.drawLine((float) MultiMapFinalDir.get(0).get(i).getOrigin().getLocX() * maxX, (float) MultiMapFinalDir.get(0).get(i).getOrigin().getLocY() * maxY, (float) MultiMapFinalDir.get(0).get(i).getDestination().getLocX() * maxX, (float) MultiMapFinalDir.get(0).get(i).getDestination().getLocY() * maxY, myPaint);
-            canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX, (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, 20, myPaint);
+            canvas.drawLine((float) MultiMapFinalDir.get(0).get(i).getOrigin().getLocX() * maxX,
+                    (float) MultiMapFinalDir.get(0).get(i).getOrigin().getLocY() * maxY,
+                    (float) MultiMapFinalDir.get(0).get(i).getDestination().getLocX() * maxX,
+                    (float) MultiMapFinalDir.get(0).get(i).getDestination().getLocY() * maxY, myPaint);
+            canvas.drawCircle((float) MultiMapFinalDir.get(0).get(i).getDestination().getLocX() * maxX,
+                    (float) MultiMapFinalDir.get(0).get(i).getDestination().getLocY() * maxY, 20, myPaint);
         }
         //Draw current step
         myPaint.setColor(current);
         myPaint.setStrokeWidth(60);
-        canvas.drawLine((float) MultiMapFinalDir.get(0).get(0).getOrigin().getLocX() * maxX, (float) MultiMapFinalDir.get(0).get(0).getOrigin().getLocY() * maxY, (float) MultiMapFinalDir.get(0).get(0).getDestination().getLocX() * maxX, (float) MultiMapFinalDir.get(0).get(0).getDestination().getLocY() * maxY, myPaint);
-        canvas.drawCircle((float) MultiMapFinalDir.get(0).get(0).getOrigin().getLocX() * maxX, (float) MultiMapFinalDir.get(0).get(0).getOrigin().getLocY() * maxY, 50, myPaint);
-        canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocX() * maxX, (float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocY() * maxY, 30, myPaint);
+        canvas.drawLine((float) MultiMapFinalDir.get(0).get(0).getOrigin().getLocX() * maxX,
+                (float) MultiMapFinalDir.get(0).get(0).getOrigin().getLocY() * maxY,
+                (float) MultiMapFinalDir.get(0).get(0).getDestination().getLocX() * maxX,
+                (float) MultiMapFinalDir.get(0).get(0).getDestination().getLocY() * maxY, myPaint);
+        canvas.drawCircle((float) MultiMapFinalDir.get(0).get(0).getOrigin().getLocX() * maxX,
+                (float) MultiMapFinalDir.get(0).get(0).getOrigin().getLocY() * maxY, 50, myPaint);
+        canvas.drawCircle((float) MultiMapFinalDir.get(0).get(0).getDestination().getLocX() * maxX,
+                (float) MultiMapFinalDir.get(0).get(0).getDestination().getLocY() * maxY, 30, myPaint);
         //Draw to ImageView
         imageView.setImageDrawable(new BitmapDrawable(getResources(), drawBitmap));
+        Button previous = (Button) findViewById(R.id.previous);
+        Button next = (Button) findViewById(R.id.next);
+        previous.setEnabled(false);
     }
 
     //Button Responses
@@ -191,6 +232,9 @@ public class displayRoute extends AppCompatActivity {
 
         //Set Next Text
         TextView direction = (TextView) findViewById(R.id.directions);
+        Button previous = (Button) findViewById(R.id.previous);
+        Button next = (Button) findViewById(R.id.next);
+        previous.setEnabled(true);
         if (textDir == null) {
 
         } else {
@@ -204,19 +248,29 @@ public class displayRoute extends AppCompatActivity {
                 if (textPos != MultiMapFinalDir.get(mapPos).size()) {
                     direction.setText(textDir.get(mapPos).get(textPos));
                 } else if (mapPos != MultiMapFinalDir.size() - 1) {
-                    direction.setText("Enter " + getMapName(mapPos + 2));
+                    int tempPos = mapPos + 1;
+                    while (textDir.get(tempPos).size() == 0) {
+                        tempPos++;
+                    }
+                    direction.setText("Enter " + getMapName(tempPos));
                 } else {
                     textPos = MultiMapFinalDir.get(mapPos).size() - 1;
                     //mapPos = multiMapFinalDir.size() - 1;
                     direction.setText("You have arrived at your destination");
+                    next.setEnabled(false);
                 }
             } else if (textPos == MultiMapFinalDir.get(mapPos).size() && mapPos != MultiMapFinalDir.size() - 1) {
                 textPos = 0; // For route coloring
                 mapPos++;
+                while (textDir.get(mapPos).size() == 0) {
+                    mapPos++;
+                }
 
                 direction.setText(textDir.get(mapPos).get(textPos));
-                imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(), getMap(mapPos + 1), imageView.getWidth(), imageView.getMaxHeight()));
+                imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(), getMap(mapPos),
+                        imageView.getWidth(), imageView.getMaxHeight()));
                 bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+                imageView.resetZoom();
             }
         }
         //Load Canvas, Bitmap and other data for drawing
@@ -233,23 +287,36 @@ public class displayRoute extends AppCompatActivity {
 
         //Draw before current step
         for (int i = 0; i < textPos; i++) {
-            canvas.drawLine((float) MultiMapFinalDir.get(mapPos).get(i).getOrigin().getLocX() * maxX, (float) MultiMapFinalDir.get(mapPos).get(i).getOrigin().getLocY() * maxY, (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX, (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, myPaint);
-            canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX, (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, 20, myPaint);
+            canvas.drawLine((float) MultiMapFinalDir.get(mapPos).get(i).getOrigin().getLocX() * maxX,
+                    (float) MultiMapFinalDir.get(mapPos).get(i).getOrigin().getLocY() * maxY,
+                    (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX,
+                    (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, myPaint);
+            canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX,
+                    (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, 20, myPaint);
         }
         //Draw after current setp
         myPaint.setColor(after);
         myPaint.setStrokeWidth(40);
         for (int i = textPos + 1; i < MultiMapFinalDir.get(mapPos).size(); i++) {
-            canvas.drawLine((float) MultiMapFinalDir.get(mapPos).get(i).getOrigin().getLocX() * maxX, (float) MultiMapFinalDir.get(mapPos).get(i).getOrigin().getLocY() * maxY, (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX, (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, myPaint);
-            canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX, (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, 20, myPaint);
+            canvas.drawLine((float) MultiMapFinalDir.get(mapPos).get(i).getOrigin().getLocX() * maxX,
+                    (float) MultiMapFinalDir.get(mapPos).get(i).getOrigin().getLocY() * maxY,
+                    (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX,
+                    (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, myPaint);
+            canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX,
+                    (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, 20, myPaint);
         }
         //Draw current step
         if (textPos < MultiMapFinalDir.get(mapPos).size()) {
             myPaint.setColor(current);
             myPaint.setStrokeWidth(60);
-            canvas.drawLine((float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocX() * maxX, (float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocY() * maxY, (float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocX() * maxX, (float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocY() * maxY, myPaint);
-            canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocX() * maxX, (float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocY() * maxY, 50, myPaint);
-            canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocX() * maxX, (float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocY() * maxY, 30, myPaint);
+            canvas.drawLine((float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocX() * maxX,
+                    (float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocY() * maxY,
+                    (float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocX() * maxX,
+                    (float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocY() * maxY, myPaint);
+            canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocX() * maxX,
+                    (float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocY() * maxY, 50, myPaint);
+            canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocX() * maxX,
+                    (float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocY() * maxY, 30, myPaint);
         }
         //Draw to ImageView
         imageView.setImageDrawable(new BitmapDrawable(getResources(), drawBitmap));
@@ -262,6 +329,9 @@ public class displayRoute extends AppCompatActivity {
 
         //Set Previous Text
         TextView direction = (TextView) findViewById(R.id.directions);
+        Button previous = (Button) findViewById(R.id.previous);
+        Button next = (Button) findViewById(R.id.next);
+        next.setEnabled(true);
         if ((textPos == 0 && mapPos == 0) || textDir == null) {
 
         } else if (textPos == 0) {
@@ -274,15 +344,20 @@ public class displayRoute extends AppCompatActivity {
 
                 textPos = MultiMapFinalDir.get(mapPos).size();
                 //directionsText.setText(textDir.get(mapPos).get(textPos));
-                direction.setText("Enter " + getMapName(mapPos + 2));
+                direction.setText("Enter " + getMapName(mapPos + 1));
             }
-            imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(), getMap(mapPos + 1), imageView.getWidth(), imageView.getMaxHeight()));
+            imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(), getMap(mapPos),
+                    imageView.getWidth(), imageView.getMaxHeight()));
             bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+            imageView.resetZoom();
         } else {
             if (!direction.getText().equals("You have arrived at your destination")) {
                 textPos--;
             }
             direction.setText(textDir.get(mapPos).get(textPos));
+        }
+        if((textPos == 0 && mapPos == 0) || textDir == null){
+            previous.setEnabled(false);
         }
         //Load Canvas, Bitmap and other data for drawing
         Bitmap drawBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.RGB_565);
@@ -299,36 +374,79 @@ public class displayRoute extends AppCompatActivity {
 
         //Draw before current step
         for (int i = 0; i < textPos; i++) {
-            canvas.drawLine((float) MultiMapFinalDir.get(mapPos).get(i).getOrigin().getLocX() * maxX, (float) MultiMapFinalDir.get(mapPos).get(i).getOrigin().getLocY() * maxY, (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX, (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, myPaint);
-            canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX, (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, 20, myPaint);
+            canvas.drawLine((float) MultiMapFinalDir.get(mapPos).get(i).getOrigin().getLocX() * maxX,
+                    (float) MultiMapFinalDir.get(mapPos).get(i).getOrigin().getLocY() * maxY,
+                    (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX,
+                    (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, myPaint);
+            canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX,
+                    (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, 20, myPaint);
         }
         //Draw after current setp
         myPaint.setColor(after);
         myPaint.setStrokeWidth(40);
         for (int i = textPos + 1; i < MultiMapFinalDir.get(mapPos).size(); i++) {
-            canvas.drawLine((float) MultiMapFinalDir.get(mapPos).get(i).getOrigin().getLocX() * maxX, (float) MultiMapFinalDir.get(mapPos).get(i).getOrigin().getLocY() * maxY, (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX, (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, myPaint);
-            canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX, (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, 20, myPaint);
+            canvas.drawLine((float) MultiMapFinalDir.get(mapPos).get(i).getOrigin().getLocX() * maxX,
+                    (float) MultiMapFinalDir.get(mapPos).get(i).getOrigin().getLocY() * maxY,
+                    (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX,
+                    (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, myPaint);
+            canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX,
+                    (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, 20, myPaint);
         }
         //Draw current step
         if (textPos < MultiMapFinalDir.get(mapPos).size()) {
             myPaint.setColor(current);
             myPaint.setStrokeWidth(60);
-            canvas.drawLine((float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocX() * maxX, (float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocY() * maxY, (float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocX() * maxX, (float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocY() * maxY, myPaint);
-            canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocX() * maxX, (float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocY() * maxY, 50, myPaint);
-            canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocX() * maxX, (float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocY() * maxY, 30, myPaint);
+            canvas.drawLine((float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocX() * maxX,
+                    (float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocY() * maxY,
+                    (float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocX() * maxX,
+                    (float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocY() * maxY, myPaint);
+            canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocX() * maxX,
+                    (float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocY() * maxY, 50, myPaint);
+            canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocX() * maxX,
+                    (float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocY() * maxY, 30, myPaint);
         }
         //Draw to ImageView
         imageView.setImageDrawable(new BitmapDrawable(getResources(), drawBitmap));
 
     }
 
-    public void fullText(){
+    public void fullText(View view) {
+        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        double speed = Double.parseDouble(SP.getString("speed", "4.5"));
         StringBuilder message = new StringBuilder();
-        message.append("hey" + "  ");
-        message.append("you" + "\n");
-        message.append("Whatcha" + "  ");
-        message.append("up to?" + "\n");
+        double time = 0;
+
+        for (int i = 0; i < textDir.size(); i++) {
+            for (int j = 0; j < textDir.get(i).size(); j++) {
+                message.append(textDir.get(i).get(j) + "\n");
+                message.append("\n");
+                time = time + MultiMapFinalDir.get(i).get(j).getDistance();
+            }
+            if (i == textDir.size() - 1) {
+                message.append("You have arrived at your destination");
+            } else {
+                if(textDir.get(i+1).size() != 0) {
+                    message.append("Enter " + getMapName(i + 1) + "\n");
+                    message.append("\n");
+                }
+            }
+        }
+        time = time / speed;
+        String timeString = Integer.toString((int) Math.floor(time / 60));
+        timeString = timeString + ":";
+        if (((int) (time % 60)) == 0) {
+            timeString = timeString + "00";
+        } else if (time % 60 < 10) {
+            timeString = timeString + "0";
+            timeString = timeString + (int) (time % 60);
+        } else {
+            timeString = timeString + (int) (time % 60);
+        }
+        message.insert(0, "Time to Destination: " + timeString + " minutes\n" + "\n");
+
+        String directions = message.toString();
         Intent intent = new Intent(this, FullText.class);
+        intent.putExtra("Directions", message.toString());
         startActivity(intent);
     }
 
@@ -353,7 +471,7 @@ public class displayRoute extends AppCompatActivity {
                 inSampleSize *= 2;
             }
         }
-        inSampleSize *= 2;
+        inSampleSize *= 2.5;
         return inSampleSize;
     }
 
@@ -402,26 +520,42 @@ public class displayRoute extends AppCompatActivity {
     }
 
     private int getMap(int n) {
-        switch (n) {
-            case 0:
-                return R.drawable.vectorr_logo;
-            case 1:
-                return R.drawable.campus;
-            case 2:
-                return R.drawable.gordon_library_2;
+        String mapName = routeMaps.get(n).getMapName();
+        if (mapName.contains("157_west")) {
+            if (mapName.contains("_1")) {
+                return R.drawable.west_157_1;
+            } else if (mapName.contains("_2")) {
+                return R.drawable.west_157_2;
+            } else {
+               return R.drawable.west_157_basement;
+            }
+        } else {
+            return getResources().getIdentifier(mapName, "drawable", getPackageName());
         }
-        return 0;
     }
 
     private String getMapName(int n) {
-        switch (n) {
-            case 0:
-                return "Logo";
-            case 1:
-                return "Campus";
-            case 2:
-                return "Gordon Library";
+        String mapName = routeMaps.get(n).getMapName();
+        String toAdd = "";
+        boolean prevIsUnderscore = true;
+        if(mapName != null) {
+            for (int j = 0; j < mapName.length(); j++) {
+                char tempChar;
+                if (prevIsUnderscore) {
+                    tempChar = mapName.charAt(j);
+                    //converts to upper case
+                    tempChar = Character.toUpperCase(tempChar);
+                    prevIsUnderscore = false;
+                } else if (mapName.charAt(j) == ('_')) {
+                    prevIsUnderscore = true;
+                    tempChar = ' ';
+                } else {
+                    tempChar = mapName.charAt(j);
+                    prevIsUnderscore = false;
+                }
+                toAdd += tempChar;
+            }
         }
-        return null;
+        return toAdd;
     }
 }

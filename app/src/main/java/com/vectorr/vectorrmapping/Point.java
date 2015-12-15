@@ -14,6 +14,9 @@ public class Point implements Comparable{
 	private ArrayList<Edge> edges = new ArrayList<Edge>();
 	private int numberEdges;
 	private boolean isStairs;
+	private boolean isOutside;
+	
+	
 	public boolean isStairs() {
 		return isStairs;
 	}
@@ -27,7 +30,7 @@ public class Point implements Comparable{
 		this.isOutside = isOutside;
 	}
 
-	private boolean isOutside;
+	
 	
 	public Point()
 	{
@@ -43,7 +46,6 @@ public class Point implements Comparable{
 		this.index = 0;
 		this.globX = x;
 		this.globY = y;
-		this.mapId = 0;
 	}
 	
 	public Point(String id, int mapId, String name, int index, int x, int y) {
