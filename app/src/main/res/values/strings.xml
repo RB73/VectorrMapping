@@ -3,61 +3,38 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
 
-    <!-- Strings related to Settings -->
+    <string name="title_activity_full_text">Full Text Directions</string>
+    <string name="large_text">
+        "Vectorr Mobile: Instructions for Use\n\n"
+"Mapping Software Quick-Start Guide\n"
+"1. Launch the Vectorr Mapping program.\n"
+"2. Select the starting building and room from the dropdown menus.\n"
+"        a) This represents the beginning location of all directions generated.\n"
+"        b) If preferred, a search tool is also provided which will find points with names related to the one given.\n"
+"3. Select the destination building and room from the dropdown menus.\n"
+"        a) These destination attributes are the place to which you would like directions.\n"
+"        b) The same search tool is provided for destinations.\n"
+"4. Press the button labelled “Directions” to generate a route between the two locations.\n"
+"        a) Text directions, along with a traced route on a map will appear if the program was able to find a route between the two points. \n"
+"                i) If Vectorr Mapping is unable to find a route, it will print out: “No Valid Route.” \n"
+"        b) Stepping through the route is as easy as pressing the next button to advance to the next step in the route. \n"
+"        c) Remembering past directions is easy too, just hit the previous button.\n"
+"        d) Pressing the “Full Text Directions” button will allow viewing of all the text directions in order.\n"
+"                i) Vectorr Mapping will also provide a time estimate for the route when viewing full text directions.\n"
+"5. To generate directions along the reverse of the route, simply press the “Swap” button to return to the original location.\n\n\n"
+"Setting Preferences for Routing\n\n"
+"Vectorr Mapping includes options for preferences to be set to change the route generated based on a user’s choices.\n"
+"1) Before generating any directions, select the button in the top right corner to change preferences.\n"
+"2) From the page that appears, a user can choose:\n"
+"        The color scheme of the program (including a color-blind accessibility mode).\n"
+"        The likelihood of the program generating a route that uses stairs. \n"
+"        The likelihood of the program generating a route that goes outside.\n"
+"        How long it will take to travel the route.\n"
+"3) Simply press the “Back” button on the mobile device to return to the main mapping page.\n"
 
-    <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
-
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
-        based on your message history
     </string>
 
-    <string name="pref_title_display_name">Display name</string>
-    <string name="pref_default_display_name">John Smith</string>
-
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
-    <string-array name="pref_example_list_titles">
-        <item>Always</item>
-        <item>When possible</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_example_list_values">
-        <item>1</item>
-        <item>0</item>
-        <item>-1</item>
-    </string-array>
-
-    <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
-
-    <string name="pref_title_sync_frequency">Sync frequency</string>
-    <string-array name="pref_sync_frequency_titles">
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_sync_frequency_values">
-        <item>15</item>
-        <item>30</item>
-        <item>60</item>
-        <item>180</item>
-        <item>360</item>
-        <item>-1</item>
-    </string-array>
-
-    <string name="pref_title_system_sync_settings">System sync settings</string>
-
-    <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Notifications</string>
-
-    <string name="pref_title_new_message_notifications">New message notifications</string>
-
-    <string name="pref_title_ringtone">Ringtone</string>
-    <string name="pref_ringtone_silent">Silent</string>
-
-    <string name="pref_title_vibrate">Vibrate</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_help">Help</string>
 </resources>

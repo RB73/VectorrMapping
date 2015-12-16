@@ -16,53 +16,111 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="4">
+        android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Start Point" />
-
-        <Spinner
-            android:id="@+id/start_spinner"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="2" />
+            android:layout_weight=".40"
+            android:orientation="vertical"
+            android:weightSum="4">
 
-        <Spinner
-            android:id="@+id/point1_spinner"
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="Start Point" />
+            </RelativeLayout>
+
+            <AutoCompleteTextView android:id="@+id/start_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Search..."
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:imeActionLabel="Done"
+                android:dropDownWidth="match_parent"
+                android:dropDownAnchor="@id/start_search"/>
+
+            <Spinner
+                android:id="@+id/start_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Select Map   " />
+
+            <Spinner
+                android:id="@+id/point1_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Select Point " />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".20"
+            android:orientation="vertical">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Swap"
+                android:onClick="swap"/>
+        </RelativeLayout>
+
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="2" />
+            android:layout_weight=".40"
+            android:orientation="vertical"
+            android:weightSum="4">
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="End Point" />
+            </RelativeLayout>
+
+            <AutoCompleteTextView android:id="@+id/end_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Search..."
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:imeActionLabel="Done"
+                android:dropDownWidth="match_parent"
+                android:dropDownAnchor="@id/start_search" />
+
+            <Spinner
+                android:id="@+id/end_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Select Map   " />
+
+            <Spinner
+                android:id="@+id/point2_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Select Point " />
+        </LinearLayout>
+
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="4">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="End Point  " />
-
-        <Spinner
-            android:id="@+id/end_spinner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2" />
-
-        <Spinner
-            android:id="@+id/point2_spinner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2" />
-    </LinearLayout>
-
-    <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/RelativeLayout01"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
@@ -70,14 +128,14 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:onClick="generatePath"
-            android:text="Directions"
-            android:layout_centerInParent="true" />
+            android:text="Directions" />
     </RelativeLayout>
 
-    <ImageView
+    <com.vectorr.vectorrmapping.TouchImageView
+        android:id="@+id/imageDisplay"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageDisplay"/>
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
