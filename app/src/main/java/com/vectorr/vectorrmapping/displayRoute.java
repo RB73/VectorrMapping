@@ -193,7 +193,7 @@ public class displayRoute extends AppCompatActivity {
         float maxY = canvas.getHeight();
         Paint myPaint = new Paint();
         myPaint.setColor(after);
-        myPaint.setStrokeWidth(40);
+        myPaint.setStrokeWidth(20);
         //Draw map onto canvas
         canvas.drawColor(Color.rgb(255, 255, 255));
         canvas.drawBitmap(bitmap, 0, 0, null);
@@ -205,11 +205,11 @@ public class displayRoute extends AppCompatActivity {
                     (float) MultiMapFinalDir.get(0).get(i).getDestination().getLocX() * maxX,
                     (float) MultiMapFinalDir.get(0).get(i).getDestination().getLocY() * maxY, myPaint);
             canvas.drawCircle((float) MultiMapFinalDir.get(0).get(i).getDestination().getLocX() * maxX,
-                    (float) MultiMapFinalDir.get(0).get(i).getDestination().getLocY() * maxY, 20, myPaint);
+                    (float) MultiMapFinalDir.get(0).get(i).getDestination().getLocY() * maxY, 10, myPaint);
         }
         //Draw current step
         myPaint.setColor(current);
-        myPaint.setStrokeWidth(60);
+        myPaint.setStrokeWidth(40);
         canvas.drawLine((float) MultiMapFinalDir.get(0).get(0).getOrigin().getLocX() * maxX,
                 (float) MultiMapFinalDir.get(0).get(0).getOrigin().getLocY() * maxY,
                 (float) MultiMapFinalDir.get(0).get(0).getDestination().getLocX() * maxX,
@@ -217,7 +217,7 @@ public class displayRoute extends AppCompatActivity {
         canvas.drawCircle((float) MultiMapFinalDir.get(0).get(0).getOrigin().getLocX() * maxX,
                 (float) MultiMapFinalDir.get(0).get(0).getOrigin().getLocY() * maxY, 50, myPaint);
         canvas.drawCircle((float) MultiMapFinalDir.get(0).get(0).getDestination().getLocX() * maxX,
-                (float) MultiMapFinalDir.get(0).get(0).getDestination().getLocY() * maxY, 30, myPaint);
+                (float) MultiMapFinalDir.get(0).get(0).getDestination().getLocY() * maxY, 20, myPaint);
         //Draw to ImageView
         imageView.setImageDrawable(new BitmapDrawable(getResources(), drawBitmap));
         Button previous = (Button) findViewById(R.id.previous);
@@ -280,7 +280,7 @@ public class displayRoute extends AppCompatActivity {
         float maxY = canvas.getHeight();
         Paint myPaint = new Paint();
         myPaint.setColor(before);
-        myPaint.setStrokeWidth(40);
+        myPaint.setStrokeWidth(20);
         //Draw map onto canvas
         canvas.drawColor(Color.rgb(255, 255, 255));
         canvas.drawBitmap(bitmap, 0, 0, null);
@@ -292,23 +292,23 @@ public class displayRoute extends AppCompatActivity {
                     (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX,
                     (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, myPaint);
             canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX,
-                    (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, 20, myPaint);
+                    (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, 10, myPaint);
         }
         //Draw after current setp
         myPaint.setColor(after);
-        myPaint.setStrokeWidth(40);
+        myPaint.setStrokeWidth(20);
         for (int i = textPos + 1; i < MultiMapFinalDir.get(mapPos).size(); i++) {
             canvas.drawLine((float) MultiMapFinalDir.get(mapPos).get(i).getOrigin().getLocX() * maxX,
                     (float) MultiMapFinalDir.get(mapPos).get(i).getOrigin().getLocY() * maxY,
                     (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX,
                     (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, myPaint);
             canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX,
-                    (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, 20, myPaint);
+                    (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, 10, myPaint);
         }
         //Draw current step
         if (textPos < MultiMapFinalDir.get(mapPos).size()) {
             myPaint.setColor(current);
-            myPaint.setStrokeWidth(60);
+            myPaint.setStrokeWidth(30);
             canvas.drawLine((float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocX() * maxX,
                     (float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocY() * maxY,
                     (float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocX() * maxX,
@@ -316,7 +316,7 @@ public class displayRoute extends AppCompatActivity {
             canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocX() * maxX,
                     (float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocY() * maxY, 50, myPaint);
             canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocX() * maxX,
-                    (float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocY() * maxY, 30, myPaint);
+                    (float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocY() * maxY, 15, myPaint);
         }
         //Draw to ImageView
         imageView.setImageDrawable(new BitmapDrawable(getResources(), drawBitmap));
@@ -366,7 +366,7 @@ public class displayRoute extends AppCompatActivity {
         float maxY = canvas.getHeight();
         Paint myPaint = new Paint();
         myPaint.setColor(before);
-        myPaint.setStrokeWidth(40);
+        myPaint.setStrokeWidth(20);
 
         //Draw map onto canvas
         canvas.drawColor(Color.rgb(255, 255, 255));
@@ -379,23 +379,23 @@ public class displayRoute extends AppCompatActivity {
                     (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX,
                     (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, myPaint);
             canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX,
-                    (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, 20, myPaint);
+                    (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, 10, myPaint);
         }
         //Draw after current setp
         myPaint.setColor(after);
-        myPaint.setStrokeWidth(40);
+        myPaint.setStrokeWidth(20);
         for (int i = textPos + 1; i < MultiMapFinalDir.get(mapPos).size(); i++) {
             canvas.drawLine((float) MultiMapFinalDir.get(mapPos).get(i).getOrigin().getLocX() * maxX,
                     (float) MultiMapFinalDir.get(mapPos).get(i).getOrigin().getLocY() * maxY,
                     (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX,
                     (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, myPaint);
             canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocX() * maxX,
-                    (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, 20, myPaint);
+                    (float) MultiMapFinalDir.get(mapPos).get(i).getDestination().getLocY() * maxY, 10, myPaint);
         }
         //Draw current step
         if (textPos < MultiMapFinalDir.get(mapPos).size()) {
             myPaint.setColor(current);
-            myPaint.setStrokeWidth(60);
+            myPaint.setStrokeWidth(30);
             canvas.drawLine((float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocX() * maxX,
                     (float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocY() * maxY,
                     (float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocX() * maxX,
@@ -403,7 +403,7 @@ public class displayRoute extends AppCompatActivity {
             canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocX() * maxX,
                     (float) MultiMapFinalDir.get(mapPos).get(textPos).getOrigin().getLocY() * maxY, 50, myPaint);
             canvas.drawCircle((float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocX() * maxX,
-                    (float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocY() * maxY, 30, myPaint);
+                    (float) MultiMapFinalDir.get(mapPos).get(textPos).getDestination().getLocY() * maxY, 15, myPaint);
         }
         //Draw to ImageView
         imageView.setImageDrawable(new BitmapDrawable(getResources(), drawBitmap));
